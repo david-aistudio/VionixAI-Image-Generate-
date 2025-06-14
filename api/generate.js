@@ -1,60 +1,53 @@
 // Menggunakan dynamic import untuk node-fetch
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-// Ini adalah fungsi utama yang akan dijalankan oleh Vercel
+// Fungsi ini akan dijalankan oleh Vercel
 export default async function handler(request, response) {
-  // Hanya izinkan request POST
+  // Hanya izinkan POST request
   if (request.method !== 'POST') {
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    // Ambil data dari body request yang dikirim frontend
-    const { prompt, negative_prompt, aspect_ratio, sample_count, style_prompt } = request.body;
+    const { prompt, model } = request.body;
 
-    if (!prompt) {
-      return response.status(400).json({ error: 'Prompt dibutuhkan' });
+    if (!prompt || !model) {
+      return response.status(400).json({ error: 'Prompt dan model dibutuhkan' });
     }
 
-    // Ambil Kunci Rahasia dari brankas Vercel
-    const API_KEY = process.env.VIONIX_API_KEY;
-    if (!API_KEY) {
-        return response.status(500).json({ error: 'API Key belum di-set di Vercel.' });
+    // Ambil Kunci Rahasia Hugging Face dari brankas Vercel
+    const API_TOKEN = process.env.HF_API_TOKEN;
+    if (!API_TOKEN) {
+        return response.status(500).json({ error: 'Kunci Rahasia Hugging Face belum dipasang di Vercel.' });
     }
     
-    // Gabungkan prompt utama dengan prompt gaya
-    const finalPrompt = style_prompt ? `${prompt}, ${style_prompt}` : prompt;
+    const API_URL = `https://api-inference.huggingface.co/models/${model}`;
 
-    // Siapkan data untuk dikirim ke Google
-    const payload = {
-        instances: [{
-            prompt: finalPrompt,
-            negative_prompt: negative_prompt || '',
-        }],
-        parameters: {
-            sampleCount: sample_count || 1,
-            aspectRatio: aspect_ratio || '1:1',
-        }
-    };
-    
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${API_KEY}`;
-
-    // Lakukan pemanggilan ke API Google dari server Vercel
-    const googleResponse = await fetch(API_URL, {
+    // Lakukan pemanggilan ke API Hugging Face dari server Vercel
+    const hfResponse = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      headers: {
+        'Authorization': `Bearer ${API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inputs: prompt }),
     });
 
-    const result = await googleResponse.json();
-
-    if (!googleResponse.ok) {
-        console.error('Google API Error:', result);
-        throw new Error(result.error?.message || 'Terjadi error dari server Google.');
+    // Jika Hugging Face mengembalikan error (misal: model loading, dll)
+    if (!hfResponse.ok) {
+        const errorText = await hfResponse.text();
+        console.error('Hugging Face Error:', errorText);
+        // Coba kirim pesan error yang lebih manusiawi
+        if (errorText.includes("is currently loading")) {
+            return response.status(503).json({ error: `Modelnya lagi manasin mesin, bro. Coba lagi dalam 1 menit.` });
+        }
+        return response.status(hfResponse.status).json({ error: `Hugging Face ngambek: ${errorText}` });
     }
     
-    // Kirim kembali hasil gambar ke frontend
-    return response.status(200).json(result);
+    // Jika berhasil, kirim kembali gambar mentah ke frontend
+    const imageBuffer = await hfResponse.buffer();
+    response.setHeader('Content-Type', 'image/jpeg');
+    return response.status(200).send(imageBuffer);
 
   } catch (error) {
     console.error('Internal Server Error:', error);
