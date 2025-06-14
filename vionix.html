@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vionix-Ai Studio | Google Imagen Generator</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Custom Scrollbar & Base Styling */
+        :root {
+            --bg-dark: #111827;
+            --bg-light: #f9fafb;
+            --card-dark: #1f2937;
+            --card-light: #ffffff;
+            --text-dark: #e5e7eb;
+            --text-light: #111827;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Dark Mode styles */
+        .dark body { background-color: var(--bg-dark); color: var(--text-dark); }
+        .dark .card { background-color: var(--card-dark); border-color: #374151; }
+        .dark .input-field { background-color: #374151; border-color: #4b5563; color: var(--text-dark); }
+        .dark .input-field:focus { --tw-ring-color: var(--accent); border-color: var(--accent); }
+
+        /* Light Mode styles */
+        .light body { background-color: var(--bg-light); color: var(--text-light); }
+        .light .card { background-color: var(--card-light); border-color: #e5e7eb; }
+        .light .input-field { background-color: #f3f4f6; border-color: #d1d5db; color: var(--text-light); }
+        .light .input-field:focus { --tw-ring-color: var(--accent); border-color: var(--accent); }
+
+        /* Style Card Custom Styling */
+        .style-card { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+        .style-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .style-card.selected { border-color: var(--accent); transform: translateY(-2px) scale(1.02); box-shadow: 0 0 15px 2px rgba(59, 130, 246, 0.4); }
+        
+        /* Page Transition Styles */
+        .page { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+        .page-hidden { opacity: 0; transform: scale(0.98); pointer-events: none; }
+        
+        /* Loading Animation */
+        #loader .bar { background-color: var(--accent); width: 15px; height: 50px; margin: 0 5px; border-radius: 5px; animation: bar-wave 1.2s infinite ease-in-out; }
+        #loader .bar:nth-child(2) { animation-delay: 0.1s; }
+        #loader .bar:nth-child(3) { animation-delay: 0.2s; }
+        #loader .bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes bar-wave { 0%, 40%, 100% { transform: scaleY(0.4); } 20% { transform: scaleY(1.0); } }
+
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Welcome Page -->
+    <div id="welcome-page" class="page container mx-auto px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <svg class="mx-auto h-16 w-16 text-blue-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <h1 class="text-4xl sm:text-6xl font-extrabold mt-4">Selamat Datang di <span class="text-blue-500">Vionix-Ai</span></h1>
+            <p class="mt-4 text-lg text-gray-400">Ubah imajinasi terliarmu menjadi kenyataan visual. Ditenagai oleh teknologi AI tercanggih dari Google, batasmu hanyalah kreativitas.</p>
+            
+            <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                <!-- Feature 1 -->
+                <div class="flex items-start space-x-4">
+                    <div class="bg-blue-500/10 p-2 rounded-lg"><svg class="w-6 h-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg></div>
+                    <div><h3 class="font-bold">Mesin Google Imagen</h3><p class="text-sm text-gray-500">Nikmati kecepatan dan kestabilan tingkat dewa.</p></div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="flex items-start space-x-4">
+                    <div class="bg-blue-500/10 p-2 rounded-lg"><svg class="w-6 h-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                    <div><h3 class="font-bold">Kontrol Penuh</h3><p class="text-sm text-gray-500">Atur ukuran, gaya, dan bahkan negative prompt.</p></div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="flex items-start space-x-4">
+                    <div class="bg-blue-500/10 p-2 rounded-lg"><svg class="w-6 h-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
+                    <div><h3 class="font-bold">Tanpa Batas</h3><p class="text-sm text-gray-500">Generate sepuasnya, kuota gratis melimpah.</p></div>
+                </div>
+            </div>
+
+            <button id="start-btn" class="mt-12 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-blue-500/50 transform hover:scale-105">
+                Mulai Berkarya Sekarang
+            </button>
+        </div>
+    </div>
+    
+    <!-- Studio Page (Hidden by default) -->
+    <div id="studio-page" class="hidden w-full page">
+        <!-- Header -->
+        <header class="fixed top-0 left-0 right-0 z-50 bg-white/5 backdrop-blur-lg border-b border-gray-700/50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-3">
+                        <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        <h1 class="text-2xl font-bold text-white">Vionix-Ai<span class="text-blue-500"> Studio</span></h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
+                            <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-moon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="card border rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold mb-4">1. Deskripsi Gambar</h2>
+                        <div class="space-y-4">
+                            <div><label for="prompt" class="block text-sm font-medium text-gray-400 mb-1">Prompt Utama</label><textarea id="prompt" rows="5" class="input-field w-full p-3 rounded-lg border focus:ring-2 focus:outline-none transition" placeholder="Contoh: seekor astronot kucing cyberpunk sedang minum kopi di kafe luar angkasa"></textarea></div>
+                            <div><label for="negative_prompt" class="block text-sm font-medium text-gray-400 mb-1">Negative Prompt (Opsional)</label><textarea id="negative_prompt" rows="3" class="input-field w-full p-3 rounded-lg border focus:ring-2 focus:outline-none transition" placeholder="Contoh: jelek, buram, teks, watermark"></textarea></div>
+                        </div>
+                    </div>
+                    <div class="card border rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold mb-4">2. Pengaturan</h2>
+                        <div class="space-y-4">
+                            <div><label for="aspect_ratio" class="block text-sm font-medium text-gray-400 mb-1">Ukuran Gambar</label><select id="aspect_ratio" class="input-field w-full p-3 rounded-lg border focus:ring-2 focus:outline-none transition"><option value="1:1" selected>Kotak (1:1)</option><option value="9:16">Potret (9:16)</option><option value="16:9">Lanskap (16:9)</option></select></div>
+                            <div><label for="sample_count" class="block text-sm font-medium text-gray-400 mb-1">Jumlah Gambar</label><select id="sample_count" class="input-field w-full p-3 rounded-lg border focus:ring-2 focus:outline-none transition"><option value="1" selected>1 Gambar</option><option value="2">2 Gambar</option><option value="4">4 Gambar</option></select></div>
+                        </div>
+                    </div>
+                    <div class="card border rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold mb-4">3. Pilih Gaya</h2>
+                        <div id="style-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <div class="card border rounded-xl p-6 shadow-lg sticky top-24">
+                        <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg flex items-center justify-center text-lg transition-all duration-300 shadow-lg hover:shadow-blue-500/50 disabled:bg-gray-500 disabled:shadow-none disabled:cursor-not-allowed">
+                            <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="m12 9-2 4h4l-2 4"/></svg>
+                            <span>Generate</span>
+                        </button>
+                        <div id="result-container" class="mt-6 w-full aspect-square bg-gray-800/50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-600">
+                            <div id="placeholder" class="text-center text-gray-500 flex flex-col items-center"><svg class="h-12 w-12" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg><p class="mt-2">Hasil gambar akan muncul di sini</p></div>
+                            <div id="loader" class="hidden items-center justify-center"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+                            <div id="image-gallery" class="hidden w-full h-full grid-cols-1 gap-2 p-2"></div>
+                        </div>
+                        <p id="status-message" class="mt-4 text-center text-sm min-h-[20px]"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- PAGE ELEMENTS ---
+            const welcomePage = document.getElementById('welcome-page');
+            const studioPage = document.getElementById('studio-page');
+            const startBtn = document.getElementById('start-btn');
+            
+            // --- STUDIO ELEMENTS ---
+            const promptEl = document.getElementById('prompt');
+            const negativePromptEl = document.getElementById('negative_prompt');
+            const aspectRatioEl = document.getElementById('aspect_ratio');
+            const sampleCountEl = document.getElementById('sample_count');
+            const styleGridEl = document.getElementById('style-grid');
+            const generateBtn = document.getElementById('generate-btn');
+            const placeholder = document.getElementById('placeholder');
+            const loader = document.getElementById('loader');
+            const imageGallery = document.getElementById('image-gallery');
+            const statusMessage = document.getElementById('status-message');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconSun = document.getElementById('theme-icon-sun');
+            const themeIconMoon = document.getElementById('theme-icon-moon');
+            const htmlEl = document.documentElement;
+
+            // --- CONFIGURATION ---
+            const apiKey = ""; // API Key will be injected by the environment.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            let selectedStyle = null;
+            
+            const styles = [
+                { name: 'Fotografi', prompt: 'photorealistic, professional photography, 8k, sharp focus', img: '📷' },
+                { name: 'Anime', prompt: 'anime style, vibrant, detailed, studio ghibli inspired', img: '🌸' },
+                { name: 'Fantasi', prompt: 'fantasy art, epic, cinematic, detailed, matte painting', img: '🧙' },
+                { name: '3D Render', prompt: '3d render, octane render, high detail, trending on artstation', img: '🧊' },
+                { name: 'Pixel Art', prompt: 'pixel art, 16-bit, detailed, vibrant color palette', img: '👾' },
+                { name: 'Komik', prompt: 'comic book style, bold lines, vibrant colors, halftone dots', img: '💥' },
+            ];
+            
+            // --- PAGE TRANSITION ---
+            startBtn.addEventListener('click', () => {
+                welcomePage.classList.add('page-hidden');
+                
+                setTimeout(() => {
+                    welcomePage.classList.add('hidden');
+                    studioPage.classList.remove('hidden');
+                    // Delay slightly to allow display property to apply before starting fade-in
+                    setTimeout(() => {
+                        studioPage.classList.remove('page-hidden');
+                    }, 50);
+                }, 500); // Match CSS transition duration
+            });
+
+            // --- STUDIO FUNCTIONS ---
+
+            function populateStyles() {
+                styleGridEl.innerHTML = '';
+                styles.forEach(style => {
+                    const card = document.createElement('div');
+                    card.className = 'style-card card cursor-pointer border rounded-lg p-2 text-center';
+                    card.innerHTML = `<div class="text-4xl mb-2">${style.img}</div><p class="text-xs font-semibold">${style.name}</p>`;
+                    card.addEventListener('click', () => {
+                        document.querySelectorAll('.style-card.selected').forEach(c => c.classList.remove('selected'));
+                        if (selectedStyle === style) { selectedStyle = null; } 
+                        else { card.classList.add('selected'); selectedStyle = style; }
+                    });
+                    styleGridEl.appendChild(card);
+                });
+            }
+
+            async function generateImages() {
+                const userPrompt = promptEl.value;
+                if (!userPrompt) {
+                    showStatus('Prompt utama tidak boleh kosong, bro!', 'error');
+                    return;
+                }
+                setLoadingState(true);
+                showStatus('Menghubungi server Google Imagen... Sabar ya...', 'loading');
+                const finalPrompt = selectedStyle ? `${userPrompt}, ${selectedStyle.prompt}` : userPrompt;
+                
+                const payload = {
+                    instances: [{ prompt: finalPrompt, negative_prompt: negativePromptEl.value || '' }],
+                    parameters: { sampleCount: parseInt(sampleCountEl.value, 10), aspectRatio: aspectRatioEl.value }
+                };
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || 'Terjadi error dari server.');
+                    }
+                    const result = await response.json();
+                    if (result.predictions && result.predictions.length > 0) {
+                        displayImages(result.predictions);
+                        showStatus('Mantap, gambar berhasil dibuat!', 'success');
+                    } else {
+                        throw new Error('Server tidak mengembalikan gambar.');
+                    }
+                } catch (error) {
+                    showStatus(`Gagal total, bro: ${error.message}`, 'error');
+                } finally {
+                    setLoadingState(false);
+                }
+            }
+            
+            function displayImages(predictions) {
+                imageGallery.innerHTML = '';
+                let gridClasses = 'grid-cols-1 grid-rows-1';
+                if(predictions.length === 2) { gridClasses = 'grid-cols-2 grid-rows-1'; }
+                else if (predictions.length > 2) { gridClasses = 'grid-cols-2 grid-rows-2'; }
+                imageGallery.className = `w-full h-full grid ${gridClasses} gap-2 p-2`;
+                
+                predictions.forEach(prediction => {
+                    const imageUrl = `data:image/png;base64,${prediction.bytesBase64Encoded}`;
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'relative group rounded-lg overflow-hidden w-full h-full';
+                    imgContainer.innerHTML = `
+                        <img src="${imageUrl}" class="w-full h-full object-contain" alt="Generated Image">
+                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <a href="${imageUrl}" download="vionix-ai-${Date.now()}.png" class="p-3 bg-blue-600 rounded-full text-white hover:bg-blue-500 transform-gpu transition-transform hover:scale-110">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            </a>
+                        </div>`;
+                    imageGallery.appendChild(imgContainer);
+                });
+                placeholder.classList.add('hidden');
+                imageGallery.classList.remove('hidden');
+            }
+            
+            function setLoadingState(isLoading) {
+                generateBtn.disabled = isLoading;
+                loader.classList.toggle('flex', isLoading);
+                loader.classList.toggle('hidden', !isLoading);
+                if (isLoading) {
+                    placeholder.classList.add('hidden');
+                    imageGallery.classList.add('hidden');
+                } else if(imageGallery.children.length === 0){
+                   placeholder.classList.remove('hidden');
+                }
+            }
+            
+            function showStatus(message, type) {
+                const colors = { error: 'text-red-400', success: 'text-green-400', loading: 'text-yellow-400' };
+                statusMessage.textContent = message;
+                statusMessage.className = `mt-4 text-center text-sm min-h-[20px] ${colors[type] || colors.loading}`;
+            }
+            
+            function setupTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    htmlEl.classList.remove('dark'); htmlEl.classList.add('light');
+                    themeIconSun.classList.remove('hidden'); themeIconMoon.classList.add('hidden');
+                } else {
+                     htmlEl.classList.add('dark'); htmlEl.classList.remove('light');
+                     themeIconSun.classList.add('hidden'); themeIconMoon.classList.remove('hidden');
+                }
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const isDark = htmlEl.classList.toggle('dark');
+                htmlEl.classList.toggle('light', !isDark);
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                themeIconSun.classList.toggle('hidden');
+                themeIconMoon.classList.toggle('hidden');
+            });
+
+
+            // --- INITIALIZATION ---
+            // Hide studio page initially without affecting animations
+            studioPage.classList.add('hidden', 'page-hidden');
+            populateStyles();
+            setupTheme();
+            generateBtn.addEventListener('click', generateImages);
+        });
+    </script>
+</body>
+</html>
+
